@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Quartz Web App</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Dynamix Scheduler", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink(QuartzWebApp.Resources.HomeTexts.Home, "Index", "Home")</li>
+                    <li>@Html.ActionLink(QuartzWebApp.Resources.HomeTexts.About, "About", "Home")</li>
+                    <li>@Html.ActionLink(QuartzWebApp.Resources.HomeTexts.Contact, "Contact", "Home")</li>
+                    <li>@Html.ActionLink(QuartzWebApp.Resources.HomeTexts.Language, "Index", "Language")</li>
+                    <li>@Html.ActionLink("Schedules", "Index", "Scheduler")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer style="clear:both">
+            <p>&copy; @DateTime.Now.Year - Quartz Web App</p>
+        </footer>
+    </div>
+
+    @RenderSection("outside", required: false)
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

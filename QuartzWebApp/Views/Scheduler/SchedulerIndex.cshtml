@@ -1,0 +1,280 @@
+﻿@using QuartzWebApp.viewModel
+@model QuartzWebApp.viewModel.Values
+
+
+
+
+
+
+    @{
+        /**/
+
+        ViewBag.Title = "schedulerIndex";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+    }
+
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+
+    <h1>Task Scheduler</h1>
+
+    <h4>Fill in the fields below to set a time for your task</h4>
+
+    <br />
+    <br />
+    <br />
+
+    @using (Html.BeginForm("ScheduleInfo", "Scheduler", FormMethod.Post))
+    {
+        Html.EnableClientValidation();
+
+
+
+        <center>
+            <div style="text-align: center">
+                <div class="form-group">
+                    <h4>Select a job from the list</h4>
+                    @Html.DropDownList("JobList1", ViewBag.jobListName as SelectList)
+                </div>
+            </div>
+        </center>
+
+        <br />
+        <center>
+            <div class="form-group" style="display:inline-block; position:center">
+                <div class="row">
+
+                    <div class="input_fields_wrap">
+                        <h4>Enter the second, minute and hour you'd like the job to start</h4>
+                        @Html.LabelFor(model => model.Second, "Second")
+                        @Html.TextBoxFor(model => model.Second)
+                        @Html.ValidationMessageFor(model => model.Second, "", new { @class = "error" })
+
+                        @Html.LabelFor(model => model.Minute, "Minute")
+                        @Html.TextBoxFor(model => model.Minute)
+                        @Html.ValidationMessageFor(model => model.Minute, "", new { @class = "error" })
+
+                        @Html.LabelFor(model => model.Hour, "Hour")
+                        @Html.TextBoxFor(model => model.Hour)
+                        @Html.ValidationMessageFor(model => model.Hour, "", new { @class = "error" })
+                        <button class="add_field_button">Add More Fields</button>
+                    </div>
+                </div>
+            </div>
+        </center>
+        <br />
+        <br />
+
+        <center>
+            <div class="col-2">
+                <ul class="list-group">
+                    <li class="list-group-item-heading list-group-item active">
+                        <h4 class="list-group-item-text">Select the month(s) the task should be set at</h4>
+                    </li>
+                    @Html.HiddenFor(m => m.monthID)
+                    @Html.DisplayFor(m => m.monthName)
+                    @for (int i = 0; i < Model.MonthInfo.Count; i++)
+                    {
+                        <li class="list-group-item" style="display:inline-block">
+                            <div class="checkbox-inline" id="checkboxMonth">
+                                @Html.HiddenFor(m => m.MonthInfo[i].monthID)
+                                @Html.CheckBoxFor(m => m.MonthInfo[i].IsChecked)
+                                @Html.LabelFor(m => m.MonthInfo[i].IsChecked, Model.MonthInfo[i].monthName)
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </center>
+
+        <center>
+            <div class="col-2">
+                <ul class="list-group">
+                    <li class="list-group-item-heading list-group-item active">
+                        <h4 class="list-group-item-text">Select the day(s) of the month the task should be set at</h4>
+                    </li>
+                    @Html.HiddenFor(m => m.DofMID)
+                    @Html.DisplayFor(m => m.DofMNo)
+                    @for (int i = 0; i < Model.DofMInfo.Count; i++)
+                    {
+                        <li class="list-group-item" style="display:inline-block">
+                            <div class="checkbox-inline" id="checkboxDofM">
+                                @Html.HiddenFor(m => m.DofMInfo[i].DofMID)
+                                @Html.CheckBoxFor(m => m.DofMInfo[i].IsChecked, new { @class = "checkboxDofM" })
+                                @Html.LabelFor(m => m.DofMInfo[i].IsChecked, Model.DofMInfo[i].DofMNo)
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </center>
+
+        <center>
+            <div class="col-3">
+                <ul class="list-group">
+                    <li class="list-group-item-heading list-group-item active">
+                        <h4 class="list-group-item-text">Select the day(s) the task should be set at</h4>
+                    </li>
+                    @Html.HiddenFor(m => m.dayID)
+                    @Html.DisplayFor(m => m.dayName)
+                    @for (int i = 0; i < Model.DayInfo.Count; i++)
+                    {
+                        <li class="list-group-item" style="display:inline-block">
+                            <div class="checkbox-inline" id="checkboxDay">
+                                @Html.HiddenFor(m => m.DayInfo[i].dayID)
+                                @Html.CheckBoxFor(m => m.DayInfo[i].IsChecked, new { @class = "checkboxDay" })
+                                @Html.LabelFor(m => m.DayInfo[i].IsChecked, Model.DayInfo[i].dayName)
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </center>
+
+        <center>
+            <div class="col-5">
+                <ul class="list-group">
+                    <li class="list-group-item-heading list-group-item active">
+                        <h4 class="list-group-item-text">Should this task be repeated for an indefinite period of time?</h4>
+                    </li>
+                    @Html.DisplayFor(m => m.rFSelection)
+                    @for (int i = 0; i < Model.RunForever.Count; i++)
+                    {
+                        <li class="list-group-item" style="display:inline-block">
+                            <div class="checkbox-inline" id="checkboxRF">
+                                @Html.CheckBoxFor(m => m.RunForever[i].IsChecked, new { @class = "checkboxRF" })
+                                @Html.LabelFor(m => m.RunForever[i].IsChecked, Model.RunForever[i].rFSelection)
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </center>
+
+        <center>
+            <div class="form-group" style="display:inline-block; position:center">
+                <div class="row" disabled="disabled">
+                    <h4>Enter the number of times the task should repeat</h4>
+                    @Html.TextBoxFor(model => model.repeatTime, "", new { @id = "repeatTime" })
+                    @Html.ValidationMessageFor(model => model.repeatTime, "", new { @class = "error" })
+                </div>
+            </div>
+        </center>
+
+        <input type="submit" value="Submit Data" id="btnSubmit" onclick='return EmptyFields();' />
+
+
+
+    }
+
+    @section scripts{
+
+
+        @* Disable repeat time field if run indefinitely box is checked. disable days of week if any dofm is checked and vice versa *@
+        <script>
+        const checkboxRI = document.querySelectorAll('.checkboxRF');
+        const repeatTime = document.getElementById('repeatTime');
+        const checkboxDofMElement = document.querySelectorAll('.checkboxDofM');
+         const checkboxDayElement = document.querySelectorAll('.checkboxDay');
+
+        var sbmt = document.getElementById("btnSubmit");
+
+        checkboxRI.forEach(el => el.addEventListener('change', event => {
+            repeatTime.disabled = event.target.checked;
+        }));
+
+        checkboxDofMElement.forEach(el => el.addEventListener('change', event => {
+
+            DaysBlocker();
+        }));
+
+        checkboxDayElement.forEach(el => el.addEventListener('change', event => {
+
+            DofmBlocker();
+        }));
+
+        function DaysBlocker() {
+            checkboxDayElement.forEach(function (item) {
+                item.disabled = false;
+            });
+
+            checkboxDofMElement.forEach(function (item) {
+                if (item.checked) {
+
+                    checkboxDayElement.forEach(function (item2) {
+                        item2.disabled = true;
+                    });
+                }
+            });
+        }
+        function DofmBlocker() {
+            checkboxDofMElement.forEach(function (a) {
+                a.disabled = false;
+            });
+
+            checkboxDayElement.forEach(function (a) {
+                if (a.checked) {
+                    checkboxDofMElement.forEach(function (b) {
+                        b.disabled = true;
+                    });
+                }
+            });
+        }
+
+
+         @* Add more input fields for second, minute and hour *@
+        $(document).ready(function () {
+            var max_fields = 10; //maximum input boxes allowed
+            var wrapper = $(".input_fields_wrap"); //Fields wrapper
+            var add_button = $(".add_field_button"); //Add button ID
+
+            var x = 1; //initlal text box count
+            $(add_button).click(function (e) { //on add input button click
+                e.preventDefault();
+                if (x < max_fields) { //max input box allowed
+                    x++; //text box increment
+                    $(wrapper).append('<div><input type="text" name="mytext[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+                }
+            });
+
+            $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+                e.preventDefault(); $(this).parent('div').remove(); x--;
+            })
+        });
+
+
+            function EmptyFields() {
+
+                var checkedField = false;
+
+                checkboxDayElement.forEach(function (a) {
+                    if (a.checked) {
+                        checkedField = true;
+                    }
+                });
+
+                checkboxDofMElement.forEach(function (b) {
+                    if (b.checked) {
+                        checkedField = true;
+                    }
+                });
+
+                if (!checkedField) {
+                    alert("You have to select either a day(s) of month or a day(s) of week");
+                } else {
+                    alert("Task has been set");
+                }
+
+
+                return checkedField;
+
+            }
+
+        </script>
+
+    }

@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Select a language</h2>
+
+<ul>
+    <li>@Html.ActionLink("English", "Change", "Language", new { LanguageAbbreviation = "en-GB" }, null)</li>
+    <li>@Html.ActionLink("日本語", "Change", "Language", new { LanguageAbbreviation = "ja-JP" }, null)</li>
+</ul>

@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ScheduleModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="AspNetUser">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+    <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+    <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+    <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+    <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+    <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+    <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Schedules" Relationship="Self.FK_Table_ToTable" FromRole="AspNetUsers" ToRole="Schedule" />
+    <Property Name="SecurityID" Type="Int32" />
+    <NavigationProperty Name="Security" Relationship="ScheduleModel.FK_Users_Security" FromRole="AspNetUser" ToRole="Security" />
+    <Property Name="SchedAccuracy" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Job">
+    <Key>
+      <PropertyRef Name="JobId" />
+    </Key>
+    <Property Name="JobId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="JobName" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Schedules" Relationship="Self.FK_Table_ToTable_1" FromRole="Jobs" ToRole="Schedule" />
+  </EntityType>
+  <EntityType Name="Schedule">
+    <Key>
+      <PropertyRef Name="ScheduleID" />
+    </Key>
+    <Property Name="ScheduleID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AspNetUsersId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="JobId" Type="Int32" />
+    <NavigationProperty Name="AspNetUser" Relationship="Self.FK_Table_ToTable" FromRole="Schedule" ToRole="AspNetUsers" />
+    <NavigationProperty Name="Job" Relationship="Self.FK_Table_ToTable_1" FromRole="Schedule" ToRole="Jobs" />
+    <Property Name="CronExpression" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="NextRunTime" Type="DateTime" Precision="3" Nullable="false" />
+    <Property Name="PreviousRunTime" Type="DateTime" Precision="3" Nullable="true" />
+    <Property Name="RepeatTime" Type="Int32" Nullable="true" />
+    <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+    <Property Name="Run_Forever" Type="Boolean" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <Association Name="FK_Table_ToTable">
+    <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1" />
+    <End Role="Schedule" Type="Self.Schedule" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Schedule">
+        <PropertyRef Name="AspNetUsersId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Table_ToTable_1">
+    <End Role="Jobs" Type="Self.Job" Multiplicity="0..1" />
+    <End Role="Schedule" Type="Self.Schedule" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Jobs">
+        <PropertyRef Name="JobId" />
+      </Principal>
+      <Dependent Role="Schedule">
+        <PropertyRef Name="JobId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="ScheduleEntity" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
+    <EntitySet Name="Jobs" EntityType="Self.Job" />
+    <EntitySet Name="Schedules" EntityType="Self.Schedule" />
+    <AssociationSet Name="FK_Table_ToTable" Association="Self.FK_Table_ToTable">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Schedule" EntitySet="Schedules" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Table_ToTable_1" Association="Self.FK_Table_ToTable_1">
+      <End Role="Jobs" EntitySet="Jobs" />
+      <End Role="Schedule" EntitySet="Schedules" />
+    </AssociationSet>
+    <EntitySet Name="Securities" EntityType="ScheduleModel.Security" />
+    <AssociationSet Name="FK_Users_Security" Association="ScheduleModel.FK_Users_Security">
+      <End Role="Security" EntitySet="Securities" />
+      <End Role="AspNetUser" EntitySet="AspNetUsers" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Security">
+    <Key>
+      <PropertyRef Name="SecurityID" />
+    </Key>
+    <Property Name="SecurityID" Type="Int32" Nullable="false" />
+    <Property Name="SecurityLevel" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="AspNetUsers" Relationship="ScheduleModel.FK_Users_Security" FromRole="Security" ToRole="AspNetUser" />
+  </EntityType>
+  <Association Name="FK_Users_Security">
+    <End Type="ScheduleModel.Security" Role="Security" Multiplicity="0..1" />
+    <End Type="ScheduleModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Security">
+        <PropertyRef Name="SecurityID" />
+      </Principal>
+      <Dependent Role="AspNetUser">
+        <PropertyRef Name="SecurityID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

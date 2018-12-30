@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ed17d69d0bca42d1936452173942d285" Name="Diagram1">
+        <EntityTypeShape EntityType="ScheduleModel.AspNetUser" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ScheduleModel.Job" Width="1.5" PointX="0.75" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="ScheduleModel.Schedule" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
+        <AssociationConnector Association="ScheduleModel.FK_Table_ToTable" ManuallyRouted="false" />
+        <AssociationConnector Association="ScheduleModel.FK_Table_ToTable_1" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ScheduleModel.Security" Width="1.5" PointX="0.75" PointY="9.125" />
+        <AssociationConnector Association="ScheduleModel.FK_Users_Security" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

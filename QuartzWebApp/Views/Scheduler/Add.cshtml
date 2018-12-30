@@ -1,0 +1,488 @@
+﻿@model QuartzWebApp.viewModel.AddScheduleViewModel
+
+@{
+    ViewBag.Title = "AddEditSchedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /*.Border {
+        border: thin solid #000000;
+    }*/
+
+    .CheckboxMonthStyle {
+        float: left;
+        width: 300px;
+        float: left;
+        clear: left;
+        height: 250px;
+        text-align: center;
+        font: 900;
+    }
+
+    .CheckboxDofmStyle {
+        float: right;
+        width: 830px;
+        height: 322px;
+        text-align: center;
+        font: 900;
+    }
+
+    .CheckboxDayStyle {
+        width: 300px;
+        clear: left;
+        float: left;
+        height: 175px;
+        text-align: center;
+        font: 900;
+    }
+
+    .IndefiniteTime {
+        width: 830px;
+        float: right;
+    }
+
+    .FieldStyle {
+        width: 810px;
+        float: right;
+        margin-top: -47px;
+        margin-bottom: 5px;
+        padding-bottom: 10px;
+    }
+
+    td {
+        background-color: white;
+        cursor: pointer;
+        padding: 2px;
+    }
+
+        td.on {
+            background-color: turquoise;
+            color: black;
+        }
+
+        td.unavailable {
+            background-color: grey;
+            color: black;
+        }
+
+        td.blocked {
+            background-color: black;
+            color: black;
+        }
+
+        td.dayDofm {
+            background-color: lightsteelblue;
+            color: lightsteelblue;
+        }
+</style>
+
+
+<h2>Add Schedule</h2>
+
+@using (Html.BeginForm("Add", "Scheduler", FormMethod.Post))
+{
+
+
+    Html.EnableClientValidation();
+
+    @Html.Partial("_AddEditForm", Model)
+
+    <div id="monthCal"></div>
+    <div id="dayCal"></div>
+    <div id="dofmCal"></div>
+
+
+}
+
+@section scripts{
+
+    @*Calender control*@
+    <script>
+        //creating month calendar
+        function MonthCalender() {
+
+            var chkbxMonth = document.querySelectorAll('#checkboxMonth');
+            //var holder = document.getElementById("checkboxMonthGrid");
+
+            var holder = document.getElementById("monthCal");
+
+
+            var tbl = document.createElement("table");
+            tbl.id = ("Month_Table");
+
+            var tblBody = document.createElement("tbody");
+
+            for (row = 0; row < 4; row++) {
+                var tblRow = document.createElement("tr");
+
+                for (col = 0; col < 3; col++) {
+                    var cell = document.createElement("td");
+                    var a = (row * 3) + col;
+
+                    cell.id = "Month_" + a;
+                    cell.setAttribute("data-val", chkbxMonth[a].querySelector(".checkboxMonth").id);
+                    cell.setAttribute("data-test", chkbxMonth[a].querySelector(".checkboxMonth").getAttribute("data-test"));
+
+                    cell.setAttribute("data-val-required", chkbxMonth[a].querySelector(".checkboxMonth").getAttribute("data-val-required"));
+                    cell.setAttribute("name", chkbxMonth[a].querySelector(".checkboxMonth").getAttribute("name"));
+                    cell.setAttribute("value", chkbxMonth[a].querySelector(".checkboxMonth").getAttribute("value"));
+
+                    var cellContent = document.createTextNode(chkbxMonth[a].textContent);
+
+                    cell.appendChild(cellContent);
+
+                    tblRow.appendChild(cell);
+
+                }
+                tblBody.appendChild(tblRow);
+
+            }
+            tbl.appendChild(tblBody);
+
+            holder.appendChild(tbl);
+
+            tbl.setAttribute("border", "2");
+
+            tbl.className = "CheckboxMonthStyle";
+
+        }
+        MonthCalender();
+
+        //checking month checkboxes
+        function MonthCalCheck() {
+            $('#Month_Table td').click(function (event) {
+                var checkboxId = "#" + $(this).attr('data-val');
+                $(checkboxId).attr('checked', !$(checkboxId).attr('checked'))
+                $(this).toggleClass('on');
+            });
+        }
+        MonthCalCheck()
+    </script>
+
+
+
+    <script>
+        //creating day calendar
+        function DayCalender() {
+
+            var chkbxDay = document.querySelectorAll('#checkboxDay');
+            //var holder = document.getElementById("checkboxDayGrid");
+
+            var holder = document.getElementById("dayCal");
+
+
+            var tbl = document.createElement("table");
+            tbl.id = ("Day_Table");
+
+            var tblBody = document.createElement("tbody");
+
+            for (row = 0; row < 3; row++) {
+                var tblRow = document.createElement("tr");
+
+                for (col = 0; col < 3; col++) {
+                    var cell = document.createElement("td");
+                    var a = (row * 3) + col;
+                    var cellContent;
+
+                    if (a < 7) {
+
+                        cell.id = "Day_" + a;
+                        cell.setAttribute("data-val", chkbxDay[a].querySelector(".checkboxDay").id);
+
+                        cell.setAttribute("data-val-required", chkbxDay[a].querySelector(".checkboxDay").getAttribute("data-val-required"));
+                        cell.setAttribute("name", chkbxDay[a].querySelector(".checkboxDay").getAttribute("name"));
+                        cell.setAttribute("value", chkbxDay[a].querySelector(".checkboxDay").getAttribute("value"));
+
+                        cellContent = document.createTextNode(chkbxDay[a].textContent);
+                    }
+                    else {
+
+                        cellContent = document.createTextNode("");
+                        cell.classList.add("blocked");
+                    }
+
+
+                    cell.appendChild(cellContent);
+
+                    tblRow.appendChild(cell);
+
+                }
+                tblBody.appendChild(tblRow);
+
+            }
+            tbl.appendChild(tblBody);
+
+            holder.appendChild(tbl);
+
+            tbl.setAttribute("border", "2");
+
+            tbl.className = "CheckboxDayStyle";
+
+        }
+        DayCalender();
+
+        //checking dayncheckboxes
+        function DayCalCheck() {
+            $('#Day_Table td').click(function (event) {
+                var checkboxId = "#" + $(this).attr('data-val');
+                $(checkboxId).attr('checked', !$(checkboxId).attr('checked'));
+
+                $(this).toggleClass('on');
+            });
+        }
+        DayCalCheck();
+
+
+    </script>
+
+    <script>
+        //creating dofm calendar
+        function DofmCalender() {
+
+            var chkbxDofm = document.querySelectorAll('#checkboxDofM');
+            //var holder = document.getElementById("checkboxDofMGrid");
+
+            var holder = document.getElementById("dofmCal");
+
+
+            var tbl = document.createElement("table");
+            tbl.id = ("Dofm_Table");
+
+            var tblBody = document.createElement("tbody");
+
+            for (row = 0; row < 4; row++) {
+                var tblRow = document.createElement("tr");
+
+                for (col = 0; col < 8; col++) {
+                    var cell = document.createElement("td");
+                    var a = (row * 8) + col;
+                    var cellContent;
+
+                    if (a < 31) {
+                        cell.id = "Dofm_" + a;
+                        cell.setAttribute("data-val", chkbxDofm[a].querySelector(".checkboxDofM").id);
+
+                        cell.setAttribute("data-val-required", chkbxDofm[a].querySelector(".checkboxDofM").getAttribute("data-val-required"));
+                        cell.setAttribute("name", chkbxDofm[a].querySelector(".checkboxDofM").getAttribute("name"));
+                        cell.setAttribute("value", chkbxDofm[a].querySelector(".checkboxDofM").previousElementSibling.getAttribute("value"));
+
+                        cellContent = document.createTextNode(chkbxDofm[a].textContent);
+                    }
+                    else {
+                        cellContent = document.createTextNode("");
+                    }
+                    cell.appendChild(cellContent);
+
+                    tblRow.appendChild(cell);
+
+                }
+                tblBody.appendChild(tblRow);
+
+            }
+            tbl.appendChild(tblBody);
+
+            holder.appendChild(tbl);
+
+            tbl.setAttribute("border", "2");
+
+            tbl.className = "CheckboxDofmStyle";
+
+        }
+        DofmCalender();
+
+        //checking dofm checkbox
+        function DofmCalCheck() {
+            $('#Dofm_Table td').click(function (event) {
+
+                if (!$(this).hasClass("blocked")) {
+                    var checkboxId = '#' + $(this).attr('data-val');
+                    $(checkboxId).attr('checked', !$(checkboxId).attr('checked'));
+
+                    $(this).toggleClass('on');
+                }
+            });
+
+        }
+        DofmCalCheck();
+    </script>
+
+
+    <script>
+        //restricting days for certain months
+        function MonthDofmLimiter() {
+            var monthDays = 0;
+            var minDays = 32;
+
+
+            var monthCells = $('#Month_Table td');
+
+            $('#Month_Table td').click(function (event) {
+                monthDays = 0;
+                minDays = 32;
+
+                for (var i = 0; i < monthCells.length; i++) {
+
+                    var NofD = parseInt($(monthCells[i]).attr('data-test'));
+
+                    if ($(monthCells[i]).hasClass('on')) {
+                        if (monthDays < NofD) {
+                            monthDays = NofD;
+                        }
+
+
+                        if (minDays > NofD) {
+                            minDays = NofD;
+                        }
+                    }
+                }
+
+                var DofM = $('#Dofm_Table td').each(function () {
+                    var day = parseInt($(this).attr('value'));
+
+                    $(this).removeClass('blocked');
+                    $(this).removeClass('unavailable');
+                    //debugger;
+                    if (monthDays > 0 && day >= monthDays) {
+                        $(this).addClass('blocked');
+                    }
+
+                    if (minDays <= day) {
+                        $(this).addClass('unavailable');
+                    }
+                });
+            });
+        }
+        MonthDofmLimiter()
+    </script>
+
+
+    <script>
+        function UnavailableClick() {
+
+            $('#Dofm_Table td').click(function (event) {
+
+                if ($(this).hasClass('unavailable')) {
+                    $(this).removeClass('unavailable');
+                    $(this).addClass('on');
+
+                }
+            });
+        }
+        UnavailableClick();
+    </script>
+
+    <script>
+        //if no cells in month have class on, remove on class from other checkboxes.
+        function CalendarSelectOnOff() {
+
+            monthCells = $('#Month_Table td');
+            dayCells = $('#Day_Table td');
+            dofmCells = $('#Dofm_Table td');
+
+            $(monthCells).click(function () {
+
+                if (!$(monthCells).hasClass('on')) {
+                    $(dayCells).each(function () {
+                        $(this).removeClass('on');
+                    });
+                    $(dofmCells).each(function () {
+                        $(this).removeClass('on');
+                    });
+                }
+            });
+        }
+        CalendarSelectOnOff();
+    </script>
+
+    @*<script>
+        function CheckboxUnselector1() {
+
+            var dayCells = $('#Day_Table td');
+            var dofmCells = $('#Dofm_Table td');
+
+            $(dayCells).click(function () {
+
+
+                if ($(dayCells).hasClass('on')) {
+                    $(dofmCells).addClass('blocked');
+                }
+                else {
+                    $(dofmCells).removeClass('blocked');
+                }
+            });
+
+            $(dofmCells).click(function () {
+
+
+                if ($(dofmCells).hasClass('on')) {
+                    $(dayCells).addClass('blocked');
+                }
+                else {
+                    $(dayCells).removeClass('blocked');
+                }
+            });
+
+        }
+        CheckboxUnselector1();
+    </script>*@
+
+    <script>
+
+        function dayCellsBlocker() {
+
+            $('#Day_Table td').each(function (day) {
+                $(day).removeClass('blocked');
+            });
+
+
+            $('#Dofm_Table td').click(function (dofm) {
+                //console.log("this is a test");
+                if ($(dofm).hasClass('on')) {
+                    $('#Day_Table td')
+
+
+
+                }
+
+
+
+            });
+        }
+        dayCellsBlocker();
+    </script>
+
+
+            @*function DaysBlocker() {
+
+            const checkAllDays = document.getElementById('checkAllDays');
+
+            checkboxDayElement.forEach(function (item) {
+                item.disabled = false;
+            });
+
+            checkboxDofMElement.forEach(function (item) {
+                if (item.checked) {
+                    checkboxDayElement.forEach(function (item2) {
+                        item2.disabled = item.checked;
+                    });
+                }
+            });
+        }
+
+        function DofmBlocker() {
+            checkboxDofMElement.forEach(function (a) {
+                a.disabled = false;
+            });
+
+            checkboxDayElement.forEach(function (a) {
+                if (a.checked) {
+                    checkboxDofMElement.forEach(function (b) {
+                        b.disabled = a.checked;
+                    });
+                }
+            });
+        }*@
+
+
+}

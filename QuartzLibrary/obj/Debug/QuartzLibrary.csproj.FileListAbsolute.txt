@@ -1,0 +1,6 @@
+C:\Users\user\source\repos\QuartzWebApp\QuartzLibrary\obj\Debug\QuartzLibrary.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\QuartzWebApp\QuartzLibrary\bin\Debug\Dynamix.QuartzLibrary.dll
+C:\Users\user\source\repos\QuartzWebApp\QuartzLibrary\bin\Debug\Dynamix.QuartzLibrary.pdb
+C:\Users\user\source\repos\QuartzWebApp\QuartzLibrary\obj\Debug\Dynamix.QuartzLibrary.dll
+C:\Users\user\source\repos\QuartzWebApp\QuartzLibrary\obj\Debug\Dynamix.QuartzLibrary.pdb
+C:\Users\user\source\repos\quartzWebApp\QuartzLibrary\obj\Debug\QuartzLibrary.csprojResolveAssemblyReference.cache

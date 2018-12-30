@@ -1,0 +1,290 @@
+﻿@model QuartzWebApp.viewModel.EditScheduleViewModel
+
+@{
+    ViewBag.Title = "AddEditSchedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /*.Border {
+        border: thin solid #000000;
+    }*/
+
+    .CheckboxMonthStyle {
+        float: left;
+        width: 300px;
+        float: left;
+        clear: left;
+    }
+
+    .CheckboxDofmStyle {
+        float: right;
+        width: 830px;
+        height: 322px;
+    }
+
+    .CheckboxDayStyle {
+        width: 300px;
+        clear: left;
+        float: left;
+    }
+
+    .IndefiniteTime {
+        width: 830px;
+        float: right;
+    }
+
+    .FieldStyle {
+        width: 810px;
+        float: right;
+        margin-top: -47px;
+        margin-bottom: 5px;
+        padding-bottom: 10px;
+    }
+</style>
+
+<h2>Edit Schedule</h2>
+
+@using (Html.BeginForm("Edit", "Scheduler", FormMethod.Post))
+{
+    Html.EnableClientValidation();
+
+
+    @Html.Partial("_AddEditForm", Model)
+
+
+
+}
+
+@section scripts{
+
+    @*<script>
+
+
+            $(document).ready(function () {
+
+                $("#btnSave").click(function () {
+
+                    $("#loaderDiv").show();
+
+                    var myformData = $("#myForm").serialize();
+                    alert("Change has been made")
+                    $.ajax({
+
+                        type: "POST",
+                        url: "",
+                        data: myformData,
+                        success: function () {
+                            $("#loaderDiv").hide();
+                            $("#myModal").modal("hide");
+                        }
+                    })
+                })
+            })
+
+
+        </script>*@
+
+
+    @* Disable repeat time field if run indefinitely box is checked. disable days of week if any dofm is checked and vice versa *@
+    <script>
+        const checkboxRF = document.getElementById('checkboxRF');
+        const repeatTime = document.getElementById('repeatTime');
+        const checkboxDofMElement = document.querySelectorAll('.checkboxDofM');
+        const checkboxDayElement = document.querySelectorAll('.checkboxDay');
+        const checkboxMonths = document.querySelectorAll('.checkboxMonth');
+
+
+
+        var sbmt = document.getElementById("btnSubmit");
+
+        checkboxRF.addEventListener('change', event => {
+
+            repeatTime.disabled = event.target.checked;
+        });
+
+        checkboxDofMElement.forEach(el => el.addEventListener('change', event => {
+
+            DaysBlocker();
+            document.getElementById('checkAllDays').disabled = event.target.checked;
+
+        }));
+
+        checkboxDayElement.forEach(el => el.addEventListener('change', event => {
+
+            DofmBlocker();
+            document.getElementById('checkAllDofm').disabled = event.target.checked;
+        }));
+
+
+        //checkAllDays.disabled = item.checked;
+
+        window.onload = DaysBlocker();
+        window.onload = DofmBlocker();
+        window.onload = EmptyFields();
+        window.onload = OnEditBlocker();
+
+        function OnEditBlocker() {
+            const checkAllDays = document.getElementById('checkAllDays');
+            const checkAllDofm = document.getElementById('checkAllDofm');
+
+
+            for (var i = 0; i < checkboxDofMElement.length; i++) {
+                if (checkboxDofMElement[i].checked) {
+                    checkAllDays.disabled = true;
+                }
+            }
+
+            for (var i = 0; i < checkboxDayElement.length; i++) {
+                if (checkboxDayElement[i].checked) {
+                    checkAllDofm.disabled = true;
+                }
+            }
+
+
+        }
+
+
+
+        function DaysBlocker() {
+
+            const checkAllDays = document.getElementById('checkAllDays');
+
+            checkboxDayElement.forEach(function (item) {
+                item.disabled = false;
+            });
+
+            checkboxDofMElement.forEach(function (item) {
+                if (item.checked) {
+                    checkboxDayElement.forEach(function (item2) {
+                        item2.disabled = item.checked;
+                    });
+                }
+            });
+        }
+
+        function DofmBlocker() {
+            checkboxDofMElement.forEach(function (a) {
+                a.disabled = false;
+            });
+
+            checkboxDayElement.forEach(function (a) {
+                if (a.checked) {
+                    checkboxDofMElement.forEach(function (b) {
+                        b.disabled = a.checked;
+                    });
+                }
+            });
+        }
+
+        function EmptyFields() {
+
+            var checkedField = false;
+
+            checkboxDayElement.forEach(function (a) {
+                if (a.checked) {
+                    checkedField = true;
+                }
+            });
+
+            checkboxDofMElement.forEach(function (b) {
+                if (b.checked) {
+                    checkedField = true;
+                }
+            });
+
+            if (!checkedField) {
+                alert("You have to select either a day(s) of month or a day(s) of week");
+            }
+
+            return checkedField;
+        }
+
+    </script>
+
+    <script>
+
+        window.onload = toggleMonth();
+        window.onload = toggleDofM();
+        window.onload = toggleDay();
+        //toggling all days, all dofm and all months
+        function toggleMonth(source) {
+
+            const allMonths = document.getElementById("checkAllMonths");
+            const checkboxMonthElement = document.querySelectorAll('.checkboxMonth');
+
+            for (var i = 0; i < checkboxMonthElement.length; i++) {
+                //if (checkboxMonthElement[i] != source)
+                checkboxMonthElement[i].checked = source.checked;
+            }
+        }
+
+        function toggleDofM(source) {
+
+            const allDOFM = document.getElementById("checkAllDofm");
+            const checkboxDofMElement = document.querySelectorAll('.checkboxDofM');
+            const checkboxDayElement = document.querySelectorAll('.checkboxDay');
+
+
+            for (var i = 0; i < checkboxDofMElement.length; i++) {
+                //if (checkboxDofMElement[i] != source)
+                checkboxDofMElement[i].checked = source.checked;
+                document.getElementById("checkAllDays").disabled = source.checked;
+                checkboxDayElement.forEach(function (a) {
+                    a.disabled = source.checked;
+                });
+
+            }
+        }
+
+        function toggleDay(source) {
+
+            const allDays = document.getElementById("checkAllDays");
+            const checkboxDayElement = document.querySelectorAll('.checkboxDay');
+            const checkboxDofMElement = document.querySelectorAll('.checkboxDofM');
+
+            for (var i = 0; i < checkboxDayElement.length; i++) {
+                //if (checkboxDayElement[i] != source)
+                checkboxDayElement[i].checked = source.checked;
+                document.getElementById("checkAllDofm").disabled = source.checked;
+                checkboxDofMElement.forEach(function (a) {
+                    a.disabled = source.checked;
+                });
+
+            }
+        }
+
+    </script>
+
+
+    <script>
+
+        var days = 0;
+        const checkboxMonthElement = document.querySelectorAll('.checkboxMonth');
+        const checkboxDofmElement = document.querySelectorAll('.checkboxDofM');
+
+        checkboxMonthElement.forEach(el => el.addEventListener('change', event => {
+
+            days = 0;
+
+            for (var i = 0; i < checkboxMonthElement.length; i++) {
+
+
+                var NofD = parseInt($(checkboxMonthElement[i]).attr('data-test'));
+
+                if (checkboxMonthElement[i].checked) {
+                    if (days < NofD)
+                        days = NofD;
+                }
+            }
+            var DofM = $(".checkboxDofM").each(function (index, value) {
+                var day = parseInt($(value).prev("input").attr("value")) + 1;
+                $(value).attr("disabled", (days > 0 && day > days));
+            });
+        }));
+
+    </script>
+
+
+
+}

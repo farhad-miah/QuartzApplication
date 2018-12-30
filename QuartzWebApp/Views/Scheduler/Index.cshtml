@@ -1,0 +1,166 @@
+﻿@model IEnumerable<QuartzWebApp.Models.Schedule>
+
+@{
+    ViewBag.Title = "ScheduleList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>ScheduleList</h2>
+
+
+<table class="table table-responsive">
+
+
+    <tr>
+        <th>Schedule ID</th>
+
+        <th>Job Name</th>
+
+        <th>Date of Task</th>
+
+        <th>Repeat</th>
+
+        <th>Run Indefinitely</th>
+
+        <th>Name of Job</th>
+
+        <th></th>
+    </tr>
+    <tbody>
+
+
+
+        @if (ViewBag.listSched != null)
+        {
+            foreach (var item in ViewBag.listSched)
+            {
+
+                <tr id="row_@item.ScheduleID">
+                    <td>@item.ScheduleID</td>
+
+                    <td>@item.JobName</td>
+
+                    <td>@item.NextRunTime</td>
+
+                    <td>@item.RepeatTime</td>
+
+                    <td>@item.Run_Forever</td>
+
+                    <td>@item.Name</td>
+
+                    <td><a href="#" class="btn btn-danger" onclick="ConfirmDelete(@item.ScheduleID)"><i class="glyphicon glyphicon-trash"></i> </a></td>
+                    <td><a href="@Url.Action("Edit", new { ScheduleID = @item.ScheduleID })" class="btn btn-danger"><i class="glyphicon glyphicon-pencil"></i> </a></td>
+
+                </tr>
+
+            }
+        }
+
+
+    </tbody>
+</table>
+
+<div class="modal" id="myModal1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+                <h3 class="modal-title">AddEdit Schedule</h3>
+            </div>
+            <div class="modal-body" id="myModalBodyDIv1">
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="hiddenScheduleID" />
+</div>
+
+
+
+@Html.ActionLink("Add New Schedule", "Add", "Scheduler")
+
+@{Html.RenderPartial("_Delete");}
+
+@section scripts
+{
+    <script>
+
+        var ConfirmDelete = function (ScheduleID) {
+
+            $("#hiddenScheduleID").val(ScheduleID);
+            $("#myModal").modal('show');
+
+
+        }
+
+        var DeleteSchedule = function () {
+
+            $("#loaderDiv").show();
+
+            var schedID = $("#hiddenScheduleID").val();
+
+            $.ajax({
+
+                type: "POST",
+                url: "/Scheduler/Delete",
+                data: { ScheduleID: schedID },
+                success: function (result) {
+                    $("#loaderDiv").hide();
+                    $("#myModal").modal("hide");
+                    $("#row_" + schedID).remove();
+
+                }
+
+
+            })
+
+        }
+    </script>
+}
+
+@*<script>
+
+        var AddEditSchedule = function (ScheduleID) {
+
+            var url = "/Scheduler/AddEditSchedule?ScheduleID" + ScheduleID;
+
+            $("#myModalBodyDiv1").load(url, function () {
+
+                $("#myModal1").modal("show");
+
+
+
+            })
+        }
+
+
+        $(document).ready(function () {
+
+            $("#btnSave").click(function () {
+
+
+                $("loaderDiv").show();
+
+                var myFormData = $("#myForm").serialize();
+                alert("Record has been edited")
+                $.ajax({
+
+                    type: "POST",
+                    utl: "/Scheduler/ScheduleInfo",
+                    data: myFormData,
+                    success: function () {
+                        $("#loaderDiv").hide();
+                        $("#myModal").modal("hide");
+                    }
+                })
+            })
+        })
+
+
+    </script>*@
